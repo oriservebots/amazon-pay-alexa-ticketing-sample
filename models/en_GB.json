@@ -1,0 +1,112 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "amazon pay ticketing sample",
+            "intents": [
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "MovieDetailsIntent",
+                    "slots": [],
+                    "samples": [
+                        "Details",
+                        "More information",
+                        "Additional information",
+                        "Additional details",
+                        "Information"
+                    ]
+                },
+                {
+                    "name": "BuyTicketIntent",
+                    "slots": [
+                        {
+                            "name": "count",
+                            "type": "AMAZON.NUMBER",
+                            "samples": [
+                                "{count} tickets",
+                                "buy {count} tickets please",
+                                "buy {count} tickets",
+                                "please buy {count} tickets",
+                                "I'd like to buy {count} tickets",
+                                "I'd like to buy {count} tickets please",
+                                "tickets",
+                                "buy tickets",
+                                "buy tickets please",
+                                "please buy tickets",
+                                "I'd like to buy tickets ",
+                                "I'd like to buy tickets please"
+                            ]
+                        }
+                    ],
+                    "samples": [
+                        "{count} tickets",
+                        "buy {count} tickets please",
+                        "buy {count} tickets",
+                        "please buy {count} tickets",
+                        "I'd like to buy {count} tickets",
+                        "I'd like to buy {count} tickets please",
+                        "tickets",
+                        "buy tickets",
+                        "buy tickets please",
+                        "please buy tickets",
+                        "I'd like to buy tickets ",
+                        "I'd like to buy tickets please"
+                    ]
+                }
+            ],
+            "types": []
+        },
+        "dialog": {
+            "intents": [
+                {
+                    "name": "BuyTicketIntent",
+                    "confirmationRequired": true,
+                    "prompts": {
+                        "confirmation": "Confirm.Intent.389818479639"
+                    },
+                    "slots": [
+                        {
+                            "name": "count",
+                            "type": "AMAZON.NUMBER",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1487065620969.1056680889023"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "prompts": [
+            {
+                "id": "Elicit.Slot.1487065620969.1056680889023",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "How many tickets would you like to buy?"
+                    }
+                ]
+            },
+            {
+                "id": "Confirm.Intent.389818479639",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "OK, you are buying {count} tickets for the movie 'Peppermint'. The price of a single ticket is 6 pounds. The tickets can be collected at the counter. Do you want to proceed?"
+                    }
+                ]
+            }
+        ]
+    }
+}

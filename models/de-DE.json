@@ -1,0 +1,114 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "amazon pay ticketing beispiel",
+            "intents": [
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "MovieDetailsIntent",
+                    "slots": [],
+                    "samples": [
+                        "Details",
+                        "Mehr Informationen",
+                        "Informationen"
+                    ]
+                },
+                {
+                    "name": "BuyTicketIntent",
+                    "slots": [
+                        {
+                            "name": "count",
+                            "type": "AMAZON.NUMBER",
+                            "samples": [
+                                "{count} Tickets kaufen",
+                                "{count} Tickets kaufen bitte",
+                                "Bitte {count} Tickets kaufen",
+                                "Ich möchte {count} Tickets kaufen",
+                                "{count} Tickets",
+                                "Ich würde gerne {count} Tickets kaufen",
+                                "Tickets",
+                                "Tickets bestellen",
+                                "Tickets kaufen",
+								"Tickets zu kaufen",
+                                "Tickets kaufen bitte",
+                                "Bitte Tickets kaufen",
+                                "Ich möchte Tickets kaufen",
+                                "Ich würde gerne Tickets kaufen"
+                            ]
+                        }
+                    ],
+                    "samples": [
+                        "Ich würde gerne {count} Tickets kaufen",
+                        "{count}",
+                        "Bitte {count} Tickets kaufen",
+                        "Bitte {count} Tickets",
+                        "Ich möchte {count} Tickets kaufen",
+                        "{count} Tickets",
+                        "Tickets",
+                        "Tickets bestellen",
+                        "Tickets kaufen",
+						"Tickets zu kaufen",
+                        "Tickets kaufen bitte",
+                        "Bitte Tickets kaufen",
+                        "Ich möchte Tickets kaufen",
+                        "Ich würde gerne Tickets kaufen"
+                    ]
+                }
+            ],
+            "types": []
+        },
+        "dialog": {
+            "intents": [
+                {
+                    "name": "BuyTicketIntent",
+                    "confirmationRequired": true,
+                    "prompts": {
+                        "confirmation": "Confirm.Intent.389818479639"
+                    },
+                    "slots": [
+                        {
+                            "name": "count",
+                            "type": "AMAZON.NUMBER",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1487065620969.1056680889023"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "prompts": [
+            {
+                "id": "Elicit.Slot.1487065620969.1056680889023",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Wie viele Tickets möchtest du kaufen?"
+                    }
+                ]
+            },
+            {
+                "id": "Confirm.Intent.389818479639",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "OK, du möchtest {count} Tickets für den Film Phantomschmerz kaufen. Du kannst die Tickets direkt am Schalter abholen. Ist das korrekt?"
+                    }
+                ]
+            }
+        ]
+    }
+}
