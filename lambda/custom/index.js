@@ -1,15 +1,12 @@
 /* eslint-disable  func-names */
 /* eslint-disable  no-console */
 
-const Alexa = require('ask-sdk-core');
-const utilities = require('utilities');
+const Alexa = require('ask-sdk');
+const localization = require('localization');
 const directiveBuilder = require('directive-builder');
 const payloadBuilder = require('payload-builder');
-//const error = require('error-handler');
+const utilities = require('utilities');
 const config = require('config').AMAZON_PAY;
-const translations = require('translations');
-const i18n = require('i18next');
-const sprintf = require('i18next-sprintf-postprocessor');
 
 const LaunchRequestHandler = {
 
@@ -17,7 +14,7 @@ const LaunchRequestHandler = {
         return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
     },
     handle(handlerInput) {
-        utilities.debug(`Intent input: ${JSON.stringify(handlerInput)}`);
+        utilities.debug(`Launch Intent input: ${JSON.stringify(handlerInput)}`);
         const requestAttributes = handlerInput.attributesManager.getRequestAttributes();
         const speechOutput = requestAttributes.t('WELCOME');
         const cardTitle = requestAttributes.t('CARD_TITLE');
@@ -50,27 +47,27 @@ const MovieDetailsIntentHandler = {
 
 const BuyTicketIntentStartedHandler = {
     canHandle(handlerInput) {
-        return handlerInput.requestEnvelope.request.type === 'IntentRequest' 
-        && handlerInput.requestEnvelope.request.intent.name === 'BuyTicketIntent'
-        && handlerInput.requestEnvelope.request.dialogState == 'STARTED';
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+            && handlerInput.requestEnvelope.request.intent.name === 'BuyTicketIntent'
+            && handlerInput.requestEnvelope.request.dialogState === 'STARTED';
     },
     handle(handlerInput) {
         // permission check
         const permissions = utilities.getPermissions(handlerInput);
         const amazonPayPermission = permissions.scopes['payments:autopay_consent'];
-        if(amazonPayPermission.status === "DENIED"){
+        if (amazonPayPermission.status === "DENIED") {
             const requestAttributes = handlerInput.attributesManager.getRequestAttributes();
             const permissionRequest = requestAttributes.t('PAY_PERMISSION_REQUEST');
             return handlerInput.responseBuilder
                 .speak(permissionRequest)
-                .withAskForPermissionsConsentCard([ 'payments:autopay_consent' ])
+                .withAskForPermissionsConsentCard(['payments:autopay_consent'])
                 .getResponse();
         }
         utilities.debug(`Intent input: ${JSON.stringify(handlerInput)}`);
         const currentIntent = handlerInput.requestEnvelope.request.intent;
         return handlerInput.responseBuilder
-                .addDelegateDirective(currentIntent)
-                .getResponse();
+            .addDelegateDirective(currentIntent)
+            .getResponse();
     }
 }
 
@@ -85,11 +82,9 @@ const BuyTicketIntentCompletedHandler = {
         utilities.debug(`Intent input: ${JSON.stringify(handlerInput)}`);
         const currentIntent = handlerInput.requestEnvelope.request.intent;
         const count = currentIntent.slots.count.value;
-        handlerInput.attributesManager.setSessionAttributes({
-            count: count
-        });
-        if (count && count.value == "?" || count.value == "0") {
-            currentIntent.slots.amount = null;
+
+        if (count && count.value === "?" || count.value === "0") {
+            currentIntent.slots.count = null;
             return handlerInput.responseBuilder
                 .addElicitSlotDirective('count', currentIntent)
                 .getResponse();
@@ -110,7 +105,6 @@ const ConfirmedBuyTicketIntentCompletedHandler = {
     },
     handle(handlerInput) {
         utilities.debug(`Intent input: ${JSON.stringify(handlerInput)}`);
-        const requestAttributes = handlerInput.attributesManager.getRequestAttributes();
         const token = handlerInput.requestEnvelope.context.System.user.userId;
 
         // start Amazon Pay setup here
@@ -128,94 +122,127 @@ const ConfirmedBuyTicketIntentCompletedHandler = {
 
 const ConnectionsSetupResponseHandler = {
     canHandle(handlerInput) {
-        return handlerInput.requestEnvelope.request.type === "Connections.Response" 
-        && handlerInput.requestEnvelope.request.name === "Setup";
+        return handlerInput.requestEnvelope.request.type === "Connections.Response"
+            && handlerInput.requestEnvelope.request.name === "Setup";
     },
     handle(handlerInput) {
         utilities.debug(`Intent input: ${JSON.stringify(handlerInput)}`);
-
-        const actionResponsePayload = handlerInput.requestEnvelope.request.payload;
-        const actionResponseStatusCode = handlerInput.requestEnvelope.request.status.code;
-        if (actionResponseStatusCode != 200) {
-            // TODO add error handling!
-
-            /*
-            const result = error.handleErrors(handlerInput);
-            // If it is a permissions error send a permission consent card to the user, otherwise .speak() error to resolve during testing
-            if (result.permissionsError) {
-                return handlerInput.responseBuilder
-                    .speak(requestAttributes.t('PAY_PERMISSION_REQUEST'))
-                    .withAskForPermissionsConsentCard([errorMessages.scope])
-                    .getResponse();
-            } else {
-                utilities.log(result.errorMessage);
-                return handlerInput.responseBuilder
-                .speak(requestAttributes.t('PAYMENT_ERROR'))
-                .getResponse();
-            }
-            */
+        const requestAttributes = handlerInput.attributesManager.getRequestAttributes();
+        const statusCode = handlerInput.requestEnvelope.request.status.code;
+        if (statusCode != 200) {
 
             return handlerInput.responseBuilder
                 .speak(requestAttributes.t('PAYMENT_ERROR'))
                 .getResponse();
-        } else {
-            const requestAttributes = handlerInput.attributesManager.getRequestAttributes();
-            const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
-
-            // get the BA id
-            const billingAgreementDetails = actionResponsePayload.billingAgreementDetails;
-            const billingAgreementID = billingAgreementDetails.billingAgreementId;
-            const billingAgreementStatus = billingAgreementDetails.billingAgreementStatus;
-
-            if(billingAgreementStatus === 'OPEN'){
-                // prepare actual charge
-                const token = handlerInput.requestEnvelope.context.System.user.userId;
-
-                var amount = sessionAttributes['count'] * config.TICKET_PRICE;
-                if(!amount || amount == 0 || amount == null){ // TODO: count stored in the session , we need a database!!
-                    amount = 99; 
-                }
-
-                const payload = payloadBuilder.chargePayload(billingAgreementID, utilities.generateRandomString(16),utilities.generateRandomString(6), amount);
-                const directive = directiveBuilder.createChargeDirective(payload, token);
-
-                utilities.debug(`Charge directive: ${JSON.stringify(directive)}`);
-
-                return handlerInput.responseBuilder
-                    .addDirective(directive)
-                    .withShouldEndSession(true)
-                    .getResponse();
-            }
             
+        } else {
+            // get the BA id
+            const payload = handlerInput.requestEnvelope.request.payload;
+            const billingAgreementDetails = payload.billingAgreementDetails;
+            const billingAgreementId = billingAgreementDetails.billingAgreementId;
+
+            if(billingAgreementDetails.billingAgreementStatus === "SUSPENDED"){
+                // no need to call charge
+                const payload = handlerInput.requestEnvelope.request.payload;
+                const requestAttributes = handlerInput.attributesManager.getRequestAttributes();
+                const errorMessage = requestAttributes.t("PAYMENT_IPM_REPEAT");
+                
+                return handlerInput.responseBuilder
+                    .speak(errorMessage)
+                    .withShouldEndSession(true)
+                    .getResponse();;
+            }
+
+            // prepare actual charge
+            return new Promise((resolve, reject) => {
+                handlerInput.attributesManager.getPersistentAttributes()
+                    .then((attributes) => {
+                        const token = handlerInput.requestEnvelope.context.System.user.userId;
+                        const locale = handlerInput.requestEnvelope.request.locale;
+                        const regionalConfig = config.REGIONAL[locale];
+                        var orderTotal = attributes.count * regionalConfig.TICKET_PRICE;
+                        var payload = payloadBuilder.chargePayload(billingAgreementId, utilities.generateRandomString(16), utilities.generateRandomString(6), orderTotal, locale);
+                        const chargeRequestDirective = directiveBuilder.createChargeDirective(payload, token);
+                        utilities.debug(`Created directive for charge ${JSON.stringify(chargeRequestDirective)}`);
+                        resolve(handlerInput.responseBuilder
+                            .addDirective(chargeRequestDirective)
+                            .withShouldEndSession(true)
+                            .getResponse());
+                    })
+                    .catch((error) => {
+                        reject(error);
+                    })
+            });
+
         }
     }
 }
 
 const ConnectionsChargeResponseHandler = {
     canHandle(handlerInput) {
-        return handlerInput.requestEnvelope.request.type === "Connections.Response" 
-        && handlerInput.requestEnvelope.request.name === "Charge";
+        return handlerInput.requestEnvelope.request.type === "Connections.Response"
+            && handlerInput.requestEnvelope.request.name === "Charge";
     },
     handle(handlerInput) {
         utilities.debug(`Intent input: ${JSON.stringify(handlerInput)}`);
-        const requestAttributes = handlerInput.attributesManager.getRequestAttributes();
-        const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
 
-        var count = sessionAttributes['count'];
-        if (count <= 0){ // TODO, store count in database
-            count = 99; 
+        const statusCode = handlerInput.requestEnvelope.request.status.code;
+        if(statusCode == 400){
+            // E.g. IPM error due to previous IPM decline on the BA without a customer reacting (if this happens all over in Sandbox, please manually close the agreement)
+            const payload = handlerInput.requestEnvelope.request.payload;
+            const requestAttributes = handlerInput.attributesManager.getRequestAttributes();
+            let errorMessage = requestAttributes.t("PAYMENT_ERROR");
+            if(payload.errorCode && payload.errorCode === "InvalidPaymentMethod"){
+                errorMessage = requestAttributes.t("PAYMENT_IPM_REPEAT");
+            }
+
+            return handlerInput.responseBuilder
+                .speak(errorMessage)
+                .withShouldEndSession(true)
+                .getResponse();
         }
-        const speechOutput = requestAttributes.t('THANK_YOU');
-        const cardTitle = requestAttributes.t('CARD_TITLE');
-        const cardContent = requestAttributes.t('SUCCESS_DETAILS_CARD')
-            .replace("$count$", count)
-            .replace("$reference$", utilities.generateRandomString(7));
+        const payload = handlerInput.requestEnvelope.request.payload;
+        const authorizationDetails = payload.authorizationDetails;
 
-        return handlerInput.responseBuilder
-            .speak(speechOutput)
-            .withSimpleCard(cardTitle, cardContent)
-            .getResponse();
+        const authorizationId = authorizationDetails.amazonAuthorizationId;
+        const authorizationStatus = authorizationDetails.authorizationStatus;
 
+        if (authorizationStatus.state != "Declined") {
+            utilities.debug('Transaction was successful, sending ticket reference and thank customer');
+
+            return new Promise((resolve, reject) => {
+                handlerInput.attributesManager.getPersistentAttributes()
+                    .then((attributes) => {
+                        const requestAttributes = handlerInput.attributesManager.getRequestAttributes();
+                        const count = attributes.count;
+                        const locale = handlerInput.requestEnvelope.request.locale;
+                        const regionalConfig = config.REGIONAL[locale];
+                        const orderTotal = count * regionalConfig.TICKET_PRICE;
+                        const speechOutput = requestAttributes.t('THANK_YOU');
+                        const cardTitle = requestAttributes.t('CARD_TITLE');
+                        const cardContent = requestAttributes.t('SUCCESS_DETAILS_CARD')
+                            .replace("$count$", count)
+                            .replace("$orderTotal$", orderTotal)
+                            .replace("$reference$", utilities.generateRandomString(7));
+                        resolve(handlerInput.responseBuilder
+                            .speak(speechOutput)
+                            .withSimpleCard(cardTitle, cardContent)
+                            .getResponse());
+                    })
+                    .catch((error) => {
+                        reject(error);
+                    })
+            });
+        } else {
+            utilities.debug('Transaction was declined, handling...');
+
+            const requestAttributes = handlerInput.attributesManager.getRequestAttributes();
+            const speechOutput = requestAttributes.t('PAYMENT_DECLINED');
+            return handlerInput.responseBuilder
+                .speak(speechOutput)
+                .withShouldEndSession(true)
+                .getResponse();
+        }
     }
 }
 
@@ -272,10 +299,11 @@ const ErrorHandler = {
         utilities.debug(`Intent input: ${JSON.stringify(handlerInput)}`);
         utilities.debug(`Error handled: ${error.message}`);
         const requestAttributes = handlerInput.attributesManager.getRequestAttributes();
-        const speechOutput = requestAttributes.t('ERROR_PROMPT');
+        const speechOutput = requestAttributes.t('PAYMENT_ERROR');
+
         return handlerInput.responseBuilder
             .speak(speechOutput)
-            .reprompt(speechOutput)
+            .withShouldEndSession(true)
             .getResponse();
     },
 };
@@ -283,24 +311,48 @@ const ErrorHandler = {
 // Finding the locale of the user
 const LocalizationInterceptor = {
     process(handlerInput) {
-
-        const localizationClient = i18n.use(sprintf).init({
-            lng: handlerInput.requestEnvelope.request.locale,
-            overloadTranslationOptionHandler: sprintf.overloadTranslationOptionHandler,
-            resources: translations.languageString,
-            returnObjects: true
-        });
-
         const attributes = handlerInput.attributesManager.getRequestAttributes();
-
         attributes.t = function (...args) {
+        const localizationClient = localization.getClientForPrompts(handlerInput.requestEnvelope.request.locale);
             return localizationClient.t(...args);
         };
     },
 };
 
+const SaveSlotsInterceptor = {
 
-const skillBuilder = Alexa.SkillBuilders.custom();
+    process(handlerInput) {
+        const request = handlerInput.requestEnvelope.request;
+        if (request.type === 'IntentRequest'
+            && request.intent.name === 'BuyTicketIntent'
+            && request.dialogState !== 'COMPLETED'
+            && request.intent.confirmationStatus === "CONFIRMED") {
+
+            let count = request.intent.slots.count.value;
+            utilities.debug(`Saving persistent attribute count with value: ${count}`);
+            return new Promise((resolve, reject) => {
+                handlerInput.attributesManager.getPersistentAttributes()
+                    .then((attributes) => {
+                        attributes['count'] = count;
+                        handlerInput.attributesManager.setPersistentAttributes(attributes);
+                        utilities.debug(`Saving persistent attributes : ${attributes['count']}`);
+
+                        return handlerInput.attributesManager.savePersistentAttributes();
+                    })
+                    .then(() => {
+                        resolve();
+                    })
+                    .catch((error) => {
+                        utilities.debug(`${error}`);
+                        reject(error);
+                    });
+            });
+        }
+    }
+};
+
+
+const skillBuilder = Alexa.SkillBuilders.standard();
 
 exports.handler = skillBuilder
     .addRequestHandlers(
@@ -315,6 +367,9 @@ exports.handler = skillBuilder
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler
     )
-    .addRequestInterceptors(LocalizationInterceptor)
+    .addRequestInterceptors(LocalizationInterceptor, SaveSlotsInterceptor)
     .addErrorHandlers(ErrorHandler)
+    .withTableName('AP_ASK_v2')
+    .withAutoCreateTable(true)
+    .withDynamoDbClient()
     .lambda();

@@ -6,7 +6,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "ask-sdk": "^2.0.3",
+    "ask-sdk": "^2.0.9",
+    "ask-sdk-dynamodb-persistence-adapter": "^2.0.9",
     "i18next": "^10.6.0",
     "i18next-sprintf-postprocessor": "^0.2.2"
   }

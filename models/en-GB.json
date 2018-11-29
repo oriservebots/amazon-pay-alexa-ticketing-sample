@@ -1,7 +1,7 @@
 {
     "interactionModel": {
         "languageModel": {
-            "invocationName": "amazon pay ticketing sample",
+            "invocationName": "movie of the day",
             "intents": [
                 {
                     "name": "AMAZON.CancelIntent",

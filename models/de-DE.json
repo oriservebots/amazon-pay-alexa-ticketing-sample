@@ -1,7 +1,7 @@
 {
     "interactionModel": {
         "languageModel": {
-            "invocationName": "amazon pay ticketing beispiel",
+            "invocationName": "film des tages",
             "intents": [
                 {
                     "name": "AMAZON.CancelIntent",
@@ -21,7 +21,8 @@
                     "samples": [
                         "Details",
                         "Mehr Informationen",
-                        "Informationen"
+                        "Informationen",
+                        "Mehr Details"
                     ]
                 },
                 {
@@ -40,7 +41,6 @@
                                 "Tickets",
                                 "Tickets bestellen",
                                 "Tickets kaufen",
-								"Tickets zu kaufen",
                                 "Tickets kaufen bitte",
                                 "Bitte Tickets kaufen",
                                 "Ich möchte Tickets kaufen",
@@ -58,7 +58,6 @@
                         "Tickets",
                         "Tickets bestellen",
                         "Tickets kaufen",
-						"Tickets zu kaufen",
                         "Tickets kaufen bitte",
                         "Bitte Tickets kaufen",
                         "Ich möchte Tickets kaufen",
@@ -105,7 +104,7 @@
                 "variations": [
                     {
                         "type": "PlainText",
-                        "value": "OK, du möchtest {count} Tickets für den Film Phantomschmerz kaufen. Du kannst die Tickets direkt am Schalter abholen. Ist das korrekt?"
+                        "value": "OK, du möchtest {count} Tickets für den Film Phantomschmerz kaufen. Du kannst die Tickets direkt am Schalter abholen. Soll ich die Tickets kostenpflichtig buchen?"
                     }
                 ]
             }

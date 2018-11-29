@@ -3,48 +3,48 @@
     "publishingInformation": {
       "locales": {
         "en-US": {
-          "summary": "Sample skill to explain Amazon Pay for Alexa skills",
+          "summary": "Sample skill to demonstrate Amazon Pay for digital use cases",
           "examplePhrases": [
-            "Alexa, open amazon pay ticketing sample",
-            "Alexa, ask amazon pay ticketing sample for tickets",
-            "Alexa, ask amazon pay ticketing sample to buy tickets"
+            "Alexa, open movie of the day",
+            "Alexa, ask movie of the day for 3 tickets",
+            "Alexa, start movie of the day"
           ],
           "keywords": [],
-          "name": "AP ASKv2",
-          "smallIconUri": "https://s3.amazonaws.com/CAPS-SSE/echo_developer/8a71/90a7ef2c5a6b4a5db81688c457187b0b/APP_ICON?versionId=ygaKi7UuT4TESI12t0iwUiNPdb.30P.2&AWSAccessKeyId=AKIAIEYXX6DHY7O4XWMA&Expires=1536685412&Signature=IwVTvlSicx3x1AHadJfWUVFi%2B6c%3D",
-          "description": "Sample skill to explain Amazon Pay for Alexa skills",
-          "largeIconUri": "https://s3.amazonaws.com/CAPS-SSE/echo_developer/8760/142be3c883f84770aef506ea1ee06e8f/APP_ICON_LARGE?versionId=.tna0.EXmbVq_hUzcHTtdH1oWGLw1R0_&AWSAccessKeyId=AKIAIEYXX6DHY7O4XWMA&Expires=1536685412&Signature=KyJ2nO%2FY0yyslinV4QI%2B7004A20%3D"
+          "name": "Movie of the day",
+          "smallIconUri": "https://s3.eu-central-1.amazonaws.com/eps-eu-external-file-share/Alexa/sample_skill/108.png",
+          "description": "Sample skill to demonstrate Amazon Pay for digital use cases",
+          "largeIconUri": "https://s3.eu-central-1.amazonaws.com/eps-eu-external-file-share/Alexa/sample_skill/512.png"
         },
         "de-DE": {
-          "summary": "Sample skill to explain Amazon Pay for Alexa skills",
+          "summary": "Beispielskill zu Amazon Pay für digitale Einkäufe",
           "examplePhrases": [
-            "Alexa, öffne amazon pay ticketing beispiel",
-            "Alexa, frage amazon pay ticketing beispiel nach tickets",
-            "Alexa, bitte amazon pay ticketing beispiel tickets zu kaufen"
+            "Alexa, öffne film des tages",
+            "Alexa, frage film des tages nach 3 tickets",
+            "Alexa, starte film des tages"
           ],
           "keywords": [],
-          "name": "AP ASKv2",
-          "smallIconUri": "https://s3.amazonaws.com/CAPS-SSE/echo_developer/8a71/90a7ef2c5a6b4a5db81688c457187b0b/APP_ICON?versionId=ygaKi7UuT4TESI12t0iwUiNPdb.30P.2&AWSAccessKeyId=AKIAIEYXX6DHY7O4XWMA&Expires=1536685412&Signature=IwVTvlSicx3x1AHadJfWUVFi%2B6c%3D",
-          "description": "Sample skill to explain Amazon Pay for Alexa skills",
-          "largeIconUri": "https://s3.amazonaws.com/CAPS-SSE/echo_developer/8760/142be3c883f84770aef506ea1ee06e8f/APP_ICON_LARGE?versionId=.tna0.EXmbVq_hUzcHTtdH1oWGLw1R0_&AWSAccessKeyId=AKIAIEYXX6DHY7O4XWMA&Expires=1536685412&Signature=KyJ2nO%2FY0yyslinV4QI%2B7004A20%3D"
+          "name": "Film des Tages",
+          "smallIconUri": "https://s3.eu-central-1.amazonaws.com/eps-eu-external-file-share/Alexa/sample_skill/108.png",
+          "description": "Beispielskill zu Amazon Pay für digitale Einkäufe",
+          "largeIconUri": "https://s3.eu-central-1.amazonaws.com/eps-eu-external-file-share/Alexa/sample_skill/512.png"
         },
         "en-GB": {
-          "summary": "Sample skill to explain Amazon Pay for Alexa skills",
+          "summary": "Sample skill to use the new ASKv2 SDK",
           "examplePhrases": [
-            "Alexa, open amazon pay ticketing sample",
-            "Alexa, ask amazon pay ticketing sample for tickets",
-            "Alexa, ask amazon pay ticketing sample to buy tickets"
+            "Alexa, open movie of the day",
+            "Alexa, ask movie of the day for 3 tickets",
+            "Alexa, start movie of the day"
           ],
           "keywords": [],
-          "name": "AP ASKv2",
-          "smallIconUri": "https://s3.amazonaws.com/CAPS-SSE/echo_developer/8a71/90a7ef2c5a6b4a5db81688c457187b0b/APP_ICON?versionId=ygaKi7UuT4TESI12t0iwUiNPdb.30P.2&AWSAccessKeyId=AKIAIEYXX6DHY7O4XWMA&Expires=1536685412&Signature=IwVTvlSicx3x1AHadJfWUVFi%2B6c%3D",
-          "description": "Sample skill to explain Amazon Pay for Alexa skills",
-          "largeIconUri": "https://s3.amazonaws.com/CAPS-SSE/echo_developer/8760/142be3c883f84770aef506ea1ee06e8f/APP_ICON_LARGE?versionId=.tna0.EXmbVq_hUzcHTtdH1oWGLw1R0_&AWSAccessKeyId=AKIAIEYXX6DHY7O4XWMA&Expires=1536685412&Signature=KyJ2nO%2FY0yyslinV4QI%2B7004A20%3D"
+          "name": "Movie of the day",
+          "smallIconUri": "https://s3.eu-central-1.amazonaws.com/eps-eu-external-file-share/Alexa/sample_skill/108.png",
+          "description": "Sample skill to demonstrate Amazon Pay for digital use cases",
+          "largeIconUri": "https://s3.eu-central-1.amazonaws.com/eps-eu-external-file-share/Alexa/sample_skill/512.png"
         }
       },
       "isAvailableWorldwide": true,
-      "testingInstructions": "Please add",
-      "category": "EVENT_FINDERS",
+      "testingInstructions": "Amazon Pay internal test skill, please contact daneu@ for questions",
+      "category": "SHOPPING",
       "distributionCountries": []
     },
     "apis": {
